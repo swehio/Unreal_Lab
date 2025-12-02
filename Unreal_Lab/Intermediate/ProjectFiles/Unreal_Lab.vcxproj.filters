@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\..\Unreal_Lab.uproject" />
+    <Filter Include="Source">
+      <UniqueIdentifier>{F31BBDD1-B3E8-3BCC-9652-680E16935819}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\Unreal_Lab.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\Source\Unreal_LabEditor.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\.vsconfig" />
+    <Filter Include="Config">
+      <UniqueIdentifier>{FA535FFB-25E1-3D20-B416-52F9BE21E06E}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\DefaultEditor.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEditorPerProjectUserSettings.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEngine.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultGame.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultInput.ini">
+      <Filter>Config</Filter>
+    </None>
+    <Filter Include="Source\Unreal_Lab">
+      <UniqueIdentifier>{130817D7-692F-310E-9008-B3A58DBAEDEF}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\Unreal_Lab\Unreal_Lab.Build.cs">
+      <Filter>Source\Unreal_Lab</Filter>
+    </None>
+    <ClCompile Include="..\..\Source\Unreal_Lab\Unreal_Lab.cpp">
+      <Filter>Source\Unreal_Lab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Unreal_Lab\Unreal_Lab.h">
+      <Filter>Source\Unreal_Lab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Unreal_Lab\Unreal_LabCharacter.cpp">
+      <Filter>Source\Unreal_Lab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Unreal_Lab\Unreal_LabCharacter.h">
+      <Filter>Source\Unreal_Lab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Unreal_Lab\Unreal_LabGameMode.cpp">
+      <Filter>Source\Unreal_Lab</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Unreal_Lab\Unreal_LabGameMode.h">
+      <Filter>Source\Unreal_Lab</Filter>
+    </ClCompile>
+    <Filter Include="Source\Unreal_Lab\Character">
+      <UniqueIdentifier>{691CF1C3-CF8F-37C4-ABA5-6064F5B8E80E}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\Unreal_Lab\Character\BaseCharacter.cpp">
+      <Filter>Source\Unreal_Lab\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Unreal_Lab\Character\BaseCharacter.h">
+      <Filter>Source\Unreal_Lab\Character</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

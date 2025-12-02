@@ -1,0 +1,19 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "d:\\git\\unreal_lab\\unreal_lab\\intermediate\\build\\win64\\unrealeditor\\inc\\unreal_lab\\uht\\unreal_labgamemode.gen.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\git\\unreal_lab\\unreal_lab\\intermediate\\build\\win64\\x64\\unreal_labeditor\\development\\unrealed\\sharedpch.unrealed.project.valapi.cpp20.h.pch",
+        "Includes": [
+            "d:\\git\\unreal_lab\\unreal_lab\\intermediate\\build\\win64\\x64\\unrealeditor\\development\\unreal_lab\\definitions.unreal_lab.h",
+            "d:\\git\\unreal_lab\\unreal_lab\\source\\unreal_lab\\unreal_labgamemode.h",
+            "c:\\program files\\epic games\\ue_5.5\\engine\\source\\runtime\\engine\\classes\\gameframework\\gamemodebase.h",
+            "c:\\program files\\epic games\\ue_5.5\\engine\\source\\runtime\\engine\\classes\\engine\\serverstatreplicator.h",
+            "c:\\program files\\epic games\\ue_5.5\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\serverstatreplicator.generated.h",
+            "c:\\program files\\epic games\\ue_5.5\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\uht\\gamemodebase.generated.h",
+            "d:\\git\\unreal_lab\\unreal_lab\\intermediate\\build\\win64\\unrealeditor\\inc\\unreal_lab\\uht\\unreal_labgamemode.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

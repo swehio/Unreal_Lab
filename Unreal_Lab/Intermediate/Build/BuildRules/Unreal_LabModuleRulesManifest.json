@@ -1,0 +1,8 @@
+{
+	"SourceFiles": [
+		"D:\\Git\\Unreal_Lab\\Unreal_Lab\\Source\\Unreal_Lab\\Unreal_Lab.Build.cs",
+		"D:\\Git\\Unreal_Lab\\Unreal_Lab\\Source\\Unreal_Lab.Target.cs",
+		"D:\\Git\\Unreal_Lab\\Unreal_Lab\\Source\\Unreal_LabEditor.Target.cs"
+	],
+	"EngineVersion": "5.5.4"
+}
