@@ -28,6 +28,9 @@ ALabPlayerCharacter::ALabPlayerCharacter()
 
 	GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
 
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	bUseControllerRotationYaw = false; 
 }
 
 void ALabPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -43,6 +46,7 @@ void ALabPlayerCharacter::MoveForward(float Value)
 	const FVector Direction = FRotationMatrix(YawRot).GetUnitAxis(EAxis::X);
 
 	AddMovementInput(Direction, Value);
+	UE_LOG(LogTemp, Display, TEXT("%f %f %f"), Direction.X, Direction.Y, Direction.Z);
 }
 
 void ALabPlayerCharacter::MoveRight(float Value)
@@ -62,5 +66,7 @@ void ALabPlayerCharacter::StartSprint()
 
 void ALabPlayerCharacter::StopSprint()
 {
-	if (GetCharacterMovement()) GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+	if (GetCharacterMovement()) GetCharacterMovement()->MaxWalkSpeed = NormalSpeed; 
 }
+ 
+ 

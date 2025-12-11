@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -19,23 +17,22 @@ public:
 	virtual void OnPossess(APawn* InPawn) override;
 
 private:
-	void MoveForward(const FInputActionValue& Value);
+	void Move(const FInputActionValue& Value);
 	void MoveRight(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void StartJump(const FInputActionValue& Value);
 	void StopJump(const FInputActionValue& Value);
 	void StartSprint(const FInputActionValue& Value);
-	void StopSprint(const FInputActionValue& Value);
+	void StopSprint(const FInputActionValue& Value); 
+	void StartCrouch(const FInputActionValue& Value);
+	void StopCrouch(const FInputActionValue& Value);
 
 private:
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<class UInputMappingContext> PlayerIMC;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<class UInputAction> IA_MoveForward;
-
-	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<class UInputAction> IA_MoveRight;
+	TObjectPtr<class UInputAction> IA_Move; 
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<class UInputAction> IA_Look;
@@ -45,6 +42,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<class UInputAction> IA_Sprint;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<class UInputAction> IA_Crouch;
 
 	UPROPERTY(EditAnywhere, Category = "Cache")
 	TObjectPtr<class ALabPlayerCharacter> CachedPlayerCharacter;
