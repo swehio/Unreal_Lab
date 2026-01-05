@@ -1,10 +1,12 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Character/LabPlayerCharacter.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Component/InteractionComponent.h"
+#include "Character/ULabPlayerAnim.h"
 
 ALabPlayerCharacter::ALabPlayerCharacter()
 {
@@ -21,7 +23,10 @@ ALabPlayerCharacter::ALabPlayerCharacter()
 	CameraComp->SetupAttachment(SpringArmComp);
 	CameraComp->bUsePawnControlRotation = false;
 
-	//Speed ¼³Á¤
+	//Interaction
+	InteractionComp = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComp")); 
+
+	//Speed ì„¤ì •
 	NormalSpeed = 230.0f;
 	SprintSpeedMultiplier = 2.2f;
 	SprintSpeed = NormalSpeed * SprintSpeedMultiplier;
@@ -36,6 +41,14 @@ ALabPlayerCharacter::ALabPlayerCharacter()
 void ALabPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+}
+
+void ALabPlayerCharacter::CutMontage()
+{
+	ULabPlayerAnim* AI = Cast<ULabPlayerAnim>(GetMesh()->GetAnimInstance());
+	if (!AI) return;
+
+	AI->MontageStop();
 }
 
 void ALabPlayerCharacter::MoveForward(float Value)
@@ -67,6 +80,11 @@ void ALabPlayerCharacter::StartSprint()
 void ALabPlayerCharacter::StopSprint()
 {
 	if (GetCharacterMovement()) GetCharacterMovement()->MaxWalkSpeed = NormalSpeed; 
+}
+
+void ALabPlayerCharacter::Interact()
+{
+	InteractionComp->TryInteract();
 }
  
  

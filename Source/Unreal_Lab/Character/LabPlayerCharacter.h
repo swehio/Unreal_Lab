@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "Character/LabBaseCharacter.h"
@@ -14,13 +14,13 @@ public:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void TurnInPlace();
+	void CutMontage();
 
 	void MoveForward(float Value);
 	void MoveRight(float Value); 
 	void StartSprint();
 	void StopSprint(); 
+	void Interact();
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -29,11 +29,16 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USpringArmComponent> SpringArmComp;
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class UInteractionComponent> InteractionComp;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement")
 	float NormalSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float SprintSpeedMultiplier;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float SprintSpeed; 
-	
+
+public:
+	UInteractionComponent* GetInteractionComp() const { return InteractionComp; }
 };
