@@ -52,7 +52,7 @@ void UInteractionComponent::UpdateInteractionTarget()
 	FVector End = Start + (Rot.Vector() * TraceDistance);
 
 	FHitResult LineHit;
-	if (GetWorld()->LineTraceSingleByChannel(LineHit, Start, End, ECC_Visibility))
+	if (GetWorld()->LineTraceSingleByChannel(LineHit, Start, End, ECC_GameTraceChannel1))
 	{
 		AActor* HitActor = LineHit.GetActor();
 		if (HitActor && HitActor->GetClass()->ImplementsInterface(UInteractable::StaticClass()))
@@ -75,7 +75,7 @@ void UInteractionComponent::UpdateInteractionTarget()
 		SweepCenter,
 		SweepCenter,
 		FQuat::Identity,
-		ECC_Visibility,
+		ECC_GameTraceChannel2,
 		Sphere
 	);
 

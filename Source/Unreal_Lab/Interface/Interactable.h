@@ -19,10 +19,7 @@ public:
     void Interact(AActor* Interactor);
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-    FText GetInteractText() const;
-
-    UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-    UTexture2D* GetInteractIcon() const;
+    FText GetInteractText() const; 
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
     void SetIconVisibility(bool bVisible);

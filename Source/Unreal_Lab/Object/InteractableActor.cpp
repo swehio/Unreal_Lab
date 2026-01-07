@@ -1,4 +1,5 @@
- 
+#include "InteractableActor.h"
+
 #include "Object/InteractableActor.h"
 #include "Components/WidgetComponent.h"
 #include "UI/InteractableIcon.h"
@@ -50,17 +51,18 @@ void AInteractableActor::UpdateIconByState()
 	if (!InteractableIconWidget||!IconTextures.Contains(InteractableState)) return;
 
 	InteractableIconWidget->SetIconImage(IconTextures[InteractableState]); 
-} 
+}
+void AInteractableActor::SetInteractableState(EInteractableState NewInteractableState)
+{
+	InteractableState = NewInteractableState;
+	UpdateIconByState();
+}
+
 
 FText AInteractableActor::GetInteractText_Implementation() const
-{
-	if (!InteractionTexts.Contains(InteractableState)) return FText::FromString("");
-	return InteractionTexts[InteractableState];
-}
-UTexture2D* AInteractableActor::GetInteractIcon_Implementation() const
 { 
-	return InteractionKeyIcon;
-}
+	return InteractionText;
+} 
 
 void AInteractableActor::SetIconVisibility_Implementation(bool bVisible)
 {

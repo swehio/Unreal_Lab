@@ -18,6 +18,8 @@ class UNREAL_LAB_API ALabPlayerController : public APlayerController
 public:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+	UFUNCTION(BlueprintCallable)
+	void UpdateInteractionUI();
 
 protected: 
 	virtual void OnPossess(APawn* InPawn) override;
@@ -41,7 +43,6 @@ private:
 	void StartCrouch(const FInputActionValue& Value);
 	void StopCrouch(const FInputActionValue& Value);
 	void OnInteractPressed(const FInputActionValue& Value);
-	void UpdateInteractionUI();
 
 private:
 	UPROPERTY(EditAnywhere, Category="Input")

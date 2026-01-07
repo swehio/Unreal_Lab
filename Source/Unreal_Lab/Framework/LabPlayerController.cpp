@@ -261,11 +261,9 @@ void ALabPlayerController::UpdateInteractionUI()
 {
 	if (!CurrentInteractTarget || !InteractionUI) return;
 
-	FText Text = IInteractable::Execute_GetInteractText(CurrentInteractTarget);
-    UTexture2D* Texture = IInteractable::Execute_GetInteractIcon(CurrentInteractTarget);
+	FText Text = IInteractable::Execute_GetInteractText(CurrentInteractTarget); 
 
-    InteractionUI->SetPromptText(Text);
-    InteractionUI->SetIcon(Texture);
+    InteractionUI->SetPromptText(Text); 
 }
 
 

@@ -26,13 +26,15 @@ public:
 
 	virtual void BeginPlay() override;
 
-public:
+public: 
+	void UpdateIconByState(); 
 
-	void UpdateIconByState();
+protected:
+	UFUNCTION(BlueprintCallable)
+	void SetInteractableState(EInteractableState NewInteractableState);
 
 private: 
-	virtual FText GetInteractText_Implementation() const;
-	virtual UTexture2D* GetInteractIcon_Implementation() const;
+	virtual FText GetInteractText_Implementation() const; 
 	virtual void SetIconVisibility_Implementation(bool bVisible);
 	virtual void Interact_Implementation(AActor* Interactor);
 	virtual void SetMeshStencil_Implementation(int StencilNum);
@@ -59,8 +61,5 @@ protected:
 	TMap<EInteractableState, UTexture2D*> IconTextures;
  
 	UPROPERTY(EditAnywhere, Category = "Interactable")
-	TMap<EInteractableState, FText>InteractionTexts;
-
-	UPROPERTY(EditAnywhere, Category = "Interactable")
-	UTexture2D* InteractionKeyIcon;
+	FText InteractionText; 
 };
