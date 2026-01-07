@@ -21,11 +21,8 @@ class UNREAL_LAB_API UInteractionComponent : public UActorComponent
 public:	
 	UInteractionComponent();
 
-	virtual void TickComponent(
-		float DeltaTime, 
-		ELevelTick TickType, 
-		FActorComponentTickFunction* ThisTickFunction
-	) override;
+	virtual void BeginPlay() override; 
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void TryInteract();
 
@@ -40,10 +37,13 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UObject> CurrentInteractable;
 
+	UPROPERTY()
+	TArray<TWeakObjectPtr<AActor>> PreviouslyDetectedActors;
+
 	UPROPERTY(EditAnywhere, Category = "Interaction")
 	float TraceDistance = 500.f;
 
 	UPROPERTY(EditAnywhere, Category = "Interaction")
-	float TraceRadius = 30.f; 
+	float SweepRadius = 300.f;
 		
 };

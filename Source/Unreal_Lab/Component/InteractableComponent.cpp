@@ -1,20 +1,28 @@
 #include "Component/InteractableComponent.h"
+#include "Components/WidgetComponent.h"
  
 UInteractableComponent::UInteractableComponent()
 { 
 	PrimaryComponentTick.bCanEverTick = false;
 	 
+	WidgetComp = CreateDefaultSubobject<UWidgetComponent>(TEXT("WidgetComp"));
 }
 
-
-// Called when the game starts
-void UInteractableComponent::BeginPlay()
+void UInteractableComponent::Interact(AActor* Interactor)
 {
-	Super::BeginPlay();
-
-	// ...
-	
 }
+
+FText UInteractableComponent::GetInteractText() const
+{
+	return FText();
+}
+
+UTexture2D* UInteractableComponent::GetInteractIcon() const
+{
+	return nullptr;
+}
+
+ 
 
  
 

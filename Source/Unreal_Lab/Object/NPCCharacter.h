@@ -5,10 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interface/Interactable.h"
-#include "NPCCharacter.generated.h"
+#include "Object/InteractableActor.h"
 
+#include "NPCCharacter.generated.h"
+  
 UCLASS()
-class UNREAL_LAB_API ANPCCharacter : public AActor, public IInteractable
+class UNREAL_LAB_API ANPCCharacter : public AInteractableActor
 {
 	GENERATED_BODY()
 	

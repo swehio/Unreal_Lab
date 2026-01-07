@@ -59,7 +59,7 @@ void ALabPlayerCharacter::MoveForward(float Value)
 	const FVector Direction = FRotationMatrix(YawRot).GetUnitAxis(EAxis::X);
 
 	AddMovementInput(Direction, Value);
-	UE_LOG(LogTemp, Display, TEXT("%f %f %f"), Direction.X, Direction.Y, Direction.Z);
+	//UE_LOG(LogTemp, Display, TEXT("%f %f %f"), Direction.X, Direction.Y, Direction.Z);
 }
 
 void ALabPlayerCharacter::MoveRight(float Value)

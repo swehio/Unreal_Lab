@@ -7,6 +7,8 @@
 #include "LabPlayerController.generated.h" 
  
 class IInteractable;
+class UInputAction;
+class UUserWidget;
 
 UCLASS()
 class UNREAL_LAB_API ALabPlayerController : public APlayerController
@@ -25,7 +27,7 @@ private:
 	void HandleInteractionTargetChanged(UObject* NewTarget);
 
 	UFUNCTION()
-	void HandleDialogueStarted(const FDialogueInfo& Info);
+	void HandleDialogueChanged(const FDialogueInfo& Info);
 
 	UFUNCTION()
 	void HandleDialogueEnded();
@@ -46,28 +48,28 @@ private:
 	TObjectPtr<class UInputMappingContext> PlayerIMC;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<class UInputAction> IA_Move; 
+	TObjectPtr<UInputAction> IA_Move; 
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<class UInputAction> IA_Look;
+	TObjectPtr<UInputAction> IA_Look;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<class UInputAction> IA_Jump;
+	TObjectPtr<UInputAction> IA_Jump;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<class UInputAction> IA_Sprint;
+	TObjectPtr<UInputAction> IA_Sprint;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<class UInputAction> IA_Crouch;
+	TObjectPtr<UInputAction> IA_Crouch;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<class UInputAction> IA_Interact;
+	TObjectPtr<UInputAction> IA_Interact;
 
 	UPROPERTY()
 	TObjectPtr<class ALabPlayerCharacter> CachedPlayerCharacter;
 
 	UPROPERTY(EditDefaultsOnly, Category= "UI")
-	TSubclassOf<class UUserWidget> InteractionUIClass;
+	TSubclassOf<UUserWidget> InteractionUIClass;
 
 	UPROPERTY()
 	TObjectPtr<class UInteractionWidget> InteractionUI;
@@ -75,11 +77,17 @@ private:
 	TObjectPtr<UObject> CurrentInteractTarget;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<class UUserWidget> DialogueWidgetClass;
+	TSubclassOf<UUserWidget> DialogueWidgetClass;
 
 	UPROPERTY()
 	TObjectPtr<class UDialogueWidget> DialogueWidget;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> PlayerHUDClass;
+
+	UPROPERTY()
+	TObjectPtr<UUserWidget> PlayerHUDWidget;
+	 
 	UPROPERTY()
 	TObjectPtr<class UDialogueManagerSubsystem> DialogueManager;
 

@@ -36,12 +36,13 @@ void ALabPlayerController::BeginPlay()
         }
     }
 
+
     
     if (UGameInstance* GI = GetGameInstance())
     {
         if (DialogueManager = GI->GetSubsystem<UDialogueManagerSubsystem>())
         {
-            DialogueManager->OnDialogueInfoChanged.AddDynamic(this, &ALabPlayerController::HandleDialogueStarted);
+            DialogueManager->OnDialogueInfoChanged.AddDynamic(this, &ALabPlayerController::HandleDialogueChanged);
 			DialogueManager->OnDialogueEnded.AddDynamic(this, &ALabPlayerController::HandleDialogueEnded);
             if(DialogueWidgetClass)
 	        {
@@ -54,6 +55,16 @@ void ALabPlayerController::BeginPlay()
 			        UE_LOG(LogTemp, Warning, TEXT("Create Dialogue Widget"));
 		        }
 	        }
+        }
+    }
+
+    if (PlayerHUDClass)
+    {
+        PlayerHUDWidget = CreateWidget<UUserWidget>(this, PlayerHUDClass);
+        if (PlayerHUDWidget)
+        {
+            PlayerHUDWidget->AddToViewport(); 
+            UE_LOG(LogTemp, Warning, TEXT("Create PlayerHUD Widget"));
         }
     }
 }
@@ -203,19 +214,19 @@ void ALabPlayerController::HandleInteractionTargetChanged(UObject* NewTarget)
 	    }
 	    else 
 	    {
-		    InteractionUI->SetVisibility(ESlateVisibility::Hidden);
+		    InteractionUI->SetVisibility(ESlateVisibility::Hidden); 
             UE_LOG(LogTemp, Warning, TEXT("CurrentInteractTarget Is Null"));
 	    } 
     }
 }
 
-void ALabPlayerController::HandleDialogueStarted(const FDialogueInfo& Info)
+void ALabPlayerController::HandleDialogueChanged(const FDialogueInfo& Info)
 {
 
 	AActor* Speaker = DialogueManager->GetCurrentSpeaker();
     if (!Speaker) return;
 
-	SetViewTargetWithBlend(Speaker, 0.5f, EViewTargetBlendFunction::VTBlend_EaseInOut);
+	SetViewTargetWithBlend(Speaker, 0.5f);
 
 	DialogueWidget->SetVisibility(ESlateVisibility::Visible);
 

@@ -14,6 +14,13 @@ class UNREAL_LAB_API UInteractableComponent : public UActorComponent, public IIn
 public:	 
 	UInteractableComponent();
 
-protected: 
-	virtual void BeginPlay() override;  
+	virtual void Interact(AActor* Interactor);
+
+	virtual FText GetInteractText() const;
+
+	virtual UTexture2D* GetInteractIcon() const;
+protected:
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<class UWidgetComponent> WidgetComp; 
+
 };

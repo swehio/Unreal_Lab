@@ -23,4 +23,10 @@ public:
 
     UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
     UTexture2D* GetInteractIcon() const;
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+    void SetIconVisibility(bool bVisible);
+
+    UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+    void SetMeshStencil(int StencilNum);
 };
