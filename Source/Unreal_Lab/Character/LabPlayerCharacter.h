@@ -1,14 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "Character/LabBaseCharacter.h"
 #include "LabPlayerCharacter.generated.h"
-
-/**
- * 
- */
+ 
 UCLASS()
 class UNREAL_LAB_API ALabPlayerCharacter : public ALabBaseCharacter
 {
@@ -19,10 +14,13 @@ public:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	void CutMontage();
+
 	void MoveForward(float Value);
 	void MoveRight(float Value); 
 	void StartSprint();
-	void StopSprint();
+	void StopSprint(); 
+	void Interact();
 
 protected:
 	UPROPERTY(VisibleAnywhere)
@@ -31,12 +29,16 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class USpringArmComponent> SpringArmComp;
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class UInteractionComponent> InteractionComp;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement")
 	float NormalSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float SprintSpeedMultiplier;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float SprintSpeed;
+	float SprintSpeed; 
 
-	
+public:
+	UInteractionComponent* GetInteractionComp() const { return InteractionComp; }
 };
