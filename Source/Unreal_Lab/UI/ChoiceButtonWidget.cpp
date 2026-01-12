@@ -8,7 +8,11 @@ void UChoiceButtonWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-
+	if (ChoiceButton)
+	{
+		ChoiceButton->OnClicked.RemoveAll(this);
+		ChoiceButton->OnClicked.AddDynamic(this, &UChoiceButtonWidget::HandleClicked);
+	}
 }
 
 void UChoiceButtonWidget::Init(int8 InIndex, const FText& InText)
@@ -17,14 +21,7 @@ void UChoiceButtonWidget::Init(int8 InIndex, const FText& InText)
 	if (ChoiceText)
 	{
 		ChoiceText->SetText(InText);
-	} 
-
-	if (ChoiceButton)
-	{
-		ChoiceButton->OnClicked.AddDynamic(
-			this, &UChoiceButtonWidget::HandleClicked
-		);
-	}
+	}  
 }
 
 void UChoiceButtonWidget::HandleClicked()

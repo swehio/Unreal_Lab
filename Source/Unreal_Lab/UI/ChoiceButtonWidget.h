@@ -15,6 +15,7 @@ class UNREAL_LAB_API UChoiceButtonWidget : public UUserWidget
 
 public:
 	virtual void NativeConstruct() override;
+
 	void Init(int8 InIndex, const FText& InText);
 
 	UPROPERTY(BlueprintAssignable)

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "UI/DialogueWidget.h"
@@ -6,93 +6,216 @@
 #include "Components/VerticalBox.h"
 #include "UI/ChoiceButtonWidget.h"
 #include "Subsystem/DialogueManagerSubsystem.h"
+#include "Kismet/GameplayStatics.h"
 
-void UDialogueWidget::Bind(UDialogueManagerSubsystem* Manager)
+void UDialogueWidget::NativeConstruct()
 {
-	BoundManager = Manager;
-	if (BoundManager)
+	Super::NativeConstruct();
+	HideAll();
+}
+
+void UDialogueWidget::HideAll()
+{
+	SetVisibility(ESlateVisibility::Hidden);
+
+	if (GetWorld())
 	{
-		BoundManager->OnDialogueInfoChanged.AddDynamic(this, &UDialogueWidget::OnInfoChanged);
+		GetWorld()->GetTimerManager().ClearTimer(TypingTimer);
 	}
-}
 
-void UDialogueWidget::OnInfoChanged(const FDialogueInfo& Info)
-{
-	StartTypewriter(Info.DialogueText);
-	if (NameText) NameText->SetText(Info.SpearkerName);
-	PendingChoices = Info.Choices;
-}
-
-void UDialogueWidget::StartTypewriter(const FText& Text)
-{
-	FullText = Text.ToString();
-	CurrentText.Empty();
-	CharIndex = 0;
-	bTyping = true;
-
-	GetWorld()->GetTimerManager().SetTimer(TypingTimer, this, &UDialogueWidget::TypeNextChar, TypingInterval, true);
-}
-
-void UDialogueWidget::TypeNextChar()
-{
-	if (CharIndex >= FullText.Len())
+	if (ChoiceList)
 	{
-		FinishTypewriter();
+		ChoiceList->ClearChildren();
+	}
+
+	PlayState = EDialoguePlayState::Hidden;
+	FullLine.Empty();
+	CurrentCharIndex = 0;
+}
+
+void UDialogueWidget::ShowNode(const FDialogueNode& Node)
+{
+	CachedNode = Node;
+
+	SetVisibility(ESlateVisibility::Visible);
+
+	if (SpeakerText) SpeakerText->SetText(Node.SpeakerName);
+	if (ChoiceList) ChoiceList->ClearChildren();
+
+	StartTyping(Node.DialogueText);
+
+	// 타이핑 중에는 선택지 아직 미표시
+	PlayState = EDialoguePlayState::Typing;
+}
+
+void UDialogueWidget::StartTyping(const FText& FullText)
+{
+	if (!GetWorld() || !LineText) return;
+
+	GetWorld()->GetTimerManager().ClearTimer(TypingTimer);
+
+	FullLine = FullText.ToString();
+	CurrentCharIndex = 0;
+	LineText->SetText(FText::GetEmpty());
+
+	GetWorld()->GetTimerManager().SetTimer(
+		TypingTimer,
+		this,
+		&UDialogueWidget::TickTyping,
+		TypingInterval,
+		true
+	);
+}
+
+void UDialogueWidget::TickTyping()
+{
+	if (!GetWorld() || !LineText) return;
+
+	if (CurrentCharIndex >= FullLine.Len())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(TypingTimer);
+
+		// 타이핑 종료
+		PlayState = EDialoguePlayState::PlayingLineEvent;
+
+		// 선택지 있으면 여기서 표시하고 선택 대기
+		if (CachedNode.Choices.Num() > 0)
+		{
+			BuildChoices(CachedNode.Choices);
+			PlayState = EDialoguePlayState::WaitingForChoice;
+			return;
+		}
+
+		// 자동 진행이면 딜레이 후 Advance
+		if (CachedNode.bAutoAdvance && Manager)
+		{
+			FTimerHandle Tmp;
+			GetWorld()->GetTimerManager().SetTimer(Tmp, [this]()
+				{
+					if (Manager)
+					{
+						Manager->Advance();
+					}
+				}, CachedNode.AutoAdvanceDelay, false);
+
+			return;
+		}
+
+		// 수동 입력 대기
+		PlayState = EDialoguePlayState::WaitingForInput;
 		return;
 	}
 
-	CurrentText.AppendChar(FullText[CharIndex++]);
-	if(DialogueText) DialogueText->SetText(FText::FromString(CurrentText));
+	CurrentCharIndex++;
+	const FString Partial = FullLine.Left(CurrentCharIndex);
+	LineText->SetText(FText::FromString(Partial));
+
+	// 타이핑 효과음(너무 잦으면 피로하니 필요하면 Interval을 키우거나 랜덤으로)
+	if (TypingSFX)
+	{
+		UGameplayStatics::PlaySound2D(this, TypingSFX);
+	}
 }
 
-void UDialogueWidget::FinishTypewriter()
+void UDialogueWidget::FinishTypingImmediately()
 {
-	bTyping = false;
+	if (!GetWorld() || !LineText) return;
+
 	GetWorld()->GetTimerManager().ClearTimer(TypingTimer);
-	CurrentText = FullText;
-	if (DialogueText) DialogueText->SetText(FText::FromString(FullText));
-	CreateChoiceButtons(PendingChoices);
+
+	LineText->SetText(FText::FromString(FullLine));
+
+	// 타이핑 스킵 후: 선택지 있으면 표시 / 없으면 대기(또는 자동진행)
+	if (CachedNode.Choices.Num() > 0)
+	{
+		BuildChoices(CachedNode.Choices);
+		PlayState = EDialoguePlayState::WaitingForChoice;
+		return;
+	}
+
+	if (CachedNode.bAutoAdvance && Manager)
+	{
+		FTimerHandle Tmp;
+		GetWorld()->GetTimerManager().SetTimer(Tmp, [this]()
+			{
+				if (Manager) Manager->Advance();
+			}, CachedNode.AutoAdvanceDelay, false);
+
+		PlayState = EDialoguePlayState::PlayingLineEvent;
+		return;
+	}
+
+	PlayState = EDialoguePlayState::WaitingForInput;
 }
 
-void UDialogueWidget::OnAdvanceInput()
+void UDialogueWidget::StopLineEventsRequest()
 {
-	if (bTyping)
+	// 문장 연출 스킵(보이스/몽타주 중단)
+	if (Manager)
 	{
-		FinishTypewriter();
-	} 
-}
-
-void UDialogueWidget::OnChiceClicked(int32 Index)
-{
-	if (BoundManager)
-	{
-		BoundManager->EndDialogue();
+		Manager->StopCurrentLineEvent();
 	}
 }
 
-void UDialogueWidget::CreateChoiceButtons(const TArray<FDialogueChoice>& Choices)
+void UDialogueWidget::OnSkipOrAdvanceInput()
 {
-	ChoiceContainer->ClearChildren();
-
-	for (int8 i = 0; i < Choices.Num(); i++)
+	// 노드 스킵 금지면 무시(컷신용)
+	if (!CachedNode.bAllowSkip)
 	{
-		UChoiceButtonWidget* Button = CreateWidget<UChoiceButtonWidget>(this, ChoiceButtonClass);
+		// 단, 타이핑 중 스킵도 막고 싶으면 여기서 return
+		// 지금은 "완전 금지" 정책
+		return;
+	}
 
-		Button->Init(i, Choices[i].ChoiceText);
+	switch (PlayState)
+	{
+	case EDialoguePlayState::Typing:
+		// 1) 타이핑 스킵(문장 완성)
+		FinishTypingImmediately();
+		break;
 
-		Button->OnChoiceClicked.AddDynamic(this, &UDialogueWidget::HandleChoiceSelected);
+	case EDialoguePlayState::PlayingLineEvent:
+		// 2) 연출 스킵(보이스/몽타주 중단) -> 입력 대기 상태로
+		StopLineEventsRequest();
+		PlayState = EDialoguePlayState::WaitingForInput;
+		break;
 
-		ChoiceContainer->AddChild(Button);
+	case EDialoguePlayState::WaitingForInput:
+		// 3) 다음 문장
+		if (Manager) Manager->Advance();
+		break;
+
+	case EDialoguePlayState::WaitingForChoice:
+		// 선택지는 스킵 불가(명시적 선택)
+		break;
+
+	default:
+		break;
 	}
 }
 
-void UDialogueWidget::HandleChoiceSelected(int32 Index)
+void UDialogueWidget::BuildChoices(const TArray<FDialogueChoice>& Choices)
 {
-	if (BoundManager)
-	{
-		BoundManager->SelectChoice(Index);
-		UE_LOG(LogTemp, Warning, TEXT("Select Index : %d"), Index); 
-	}
+	if (!ChoiceList || !ChoiceButtonClass) return;
 
-	ChoiceContainer->ClearChildren();
-} 
+	ChoiceList->ClearChildren();
+
+	for (int32 i = 0; i < Choices.Num(); i++)
+	{
+		UChoiceButtonWidget* Btn = CreateWidget<UChoiceButtonWidget>(this, ChoiceButtonClass);
+		if (!Btn) continue;
+
+		Btn->Init(i, Choices[i].ChoiceText);
+		Btn->OnChoiceClicked.AddDynamic(this, &UDialogueWidget::HandleChoiceClicked);
+
+		ChoiceList->AddChild(Btn);
+	}
+}
+
+void UDialogueWidget::HandleChoiceClicked(int32 ChoiceIndex)
+{
+	if (Manager)
+	{
+		Manager->SelectChoice(ChoiceIndex);
+	}
+}

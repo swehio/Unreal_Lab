@@ -16,7 +16,7 @@ void UInteractionWidget::SetPromptText(const FText& NewText)
 		}
 		else
 		{
-			PromptHorizonBox->SetVisibility(ESlateVisibility::Visible);
+			PromptHorizonBox->SetVisibility(ESlateVisibility::HitTestInvisible);
 			PromptText->SetText(NewText); 
 		}
 	} 

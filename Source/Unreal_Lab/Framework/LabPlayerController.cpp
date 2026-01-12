@@ -1,4 +1,4 @@
-#include "Framework/LabPlayerController.h" 
+﻿#include "Framework/LabPlayerController.h" 
 #include "Engine/GameInstance.h"
 #include "Character/LabPlayerCharacter.h"
 #include "EnhancedInputSubsystems.h"
@@ -9,18 +9,45 @@
 #include "UI/DialogueWidget.h"
 #include "Subsystem/DialogueManagerSubsystem.h"
 #include "Component/InteractionComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Components/AudioComponent.h"
 
 void ALabPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
+    DialogueManager = GetGameInstance()->GetSubsystem<UDialogueManagerSubsystem>();
+
+    if (DialogueManager)
+    {
+        DialogueManager->OnDialogueStarted.AddUObject(this, &ALabPlayerController::HandleDialogueStarted);
+        DialogueManager->OnDialogueEnded.AddUObject(this, &ALabPlayerController::HandleDialogueEnded);
+        DialogueManager->OnDialogueNodeChanged.AddUObject(this, &ALabPlayerController::HandleNodeChanged);
+        DialogueManager->OnDialogueActionTriggered.AddUObject(this, &ALabPlayerController::HandleActionTriggered);
+
+        DialogueManager->OnDialogueLineEventStart.AddUObject(this, &ALabPlayerController::HandleLineEventStart);
+        DialogueManager->OnDialogueLineEventStop.AddUObject(this, &ALabPlayerController::HandleLineEventStop);
+    }
+
+    if (DialogueWidgetClass)
+    {
+        DialogueWidget = CreateWidget<UDialogueWidget>(this, DialogueWidgetClass);
+        if (DialogueWidget)
+        {
+            DialogueWidget->AddToViewport();
+            DialogueWidget->HideAll();
+            DialogueWidget->SetManager(DialogueManager);
+            UE_LOG(LogTemp, Warning, TEXT("Create Dialogue Widget"));
+        }
+    }
+
 	if (ULocalPlayer* LocalPlayer = GetLocalPlayer())
 	{
-        if (UEnhancedInputLocalPlayerSubsystem* Subsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
+        if (CachedSubsystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())
         {  
-            if (PlayerIMC)
+            if (IMC_Gameplay)
             {
-                Subsystem->AddMappingContext(PlayerIMC, 0);
+                CachedSubsystem->AddMappingContext(IMC_Gameplay, 0);
             }
         }
 	}
@@ -34,29 +61,7 @@ void ALabPlayerController::BeginPlay()
             InteractionUI->SetVisibility(ESlateVisibility::Hidden);
             UE_LOG(LogTemp, Warning, TEXT("Create Interaction Widget"));
         }
-    }
-
-
-    
-    if (UGameInstance* GI = GetGameInstance())
-    {
-        if (DialogueManager = GI->GetSubsystem<UDialogueManagerSubsystem>())
-        {
-            DialogueManager->OnDialogueInfoChanged.AddDynamic(this, &ALabPlayerController::HandleDialogueChanged);
-			DialogueManager->OnDialogueEnded.AddDynamic(this, &ALabPlayerController::HandleDialogueEnded);
-            if(DialogueWidgetClass)
-	        {
-		        DialogueWidget = CreateWidget<UDialogueWidget>(this, DialogueWidgetClass);
-		        if (DialogueWidget)
-		        {
-			        DialogueWidget->AddToViewport();
-			        DialogueWidget->SetVisibility(ESlateVisibility::Hidden);
-                    DialogueWidget->Bind(DialogueManager);
-			        UE_LOG(LogTemp, Warning, TEXT("Create Dialogue Widget"));
-		        }
-	        }
-        }
-    }
+    }  
 
     if (PlayerHUDClass)
     {
@@ -66,7 +71,7 @@ void ALabPlayerController::BeginPlay()
             PlayerHUDWidget->AddToViewport(); 
             UE_LOG(LogTemp, Warning, TEXT("Create PlayerHUD Widget"));
         }
-    }
+    }  
 }
 
 
@@ -103,6 +108,14 @@ void ALabPlayerController::SetupInputComponent()
     if (IA_Interact)
     {
         EInput->BindAction(IA_Interact, ETriggerEvent::Started, this, &ALabPlayerController::OnInteractPressed);
+    }
+    if (IA_DialogueAdvance)
+    {
+        EInput->BindAction(IA_DialogueAdvance, ETriggerEvent::Started, this, &ALabPlayerController::DialogueSkipOrAdvanceInput);
+    }
+    if (IA_DialogueCancle)
+    {
+        EInput->BindAction(IA_DialogueCancle, ETriggerEvent::Started, this, &ALabPlayerController::DialogueCancle);
     }
 }
 
@@ -208,7 +221,7 @@ void ALabPlayerController::HandleInteractionTargetChanged(UObject* NewTarget)
     {
 	    if (CurrentInteractTarget)
 	    {
-		    InteractionUI->SetVisibility(ESlateVisibility::Visible);
+		    InteractionUI->SetVisibility(ESlateVisibility::HitTestInvisible);
             UpdateInteractionUI();
             UE_LOG(LogTemp, Warning, TEXT("CurrentInteractTarget Is Not Null"));
 	    }
@@ -218,44 +231,110 @@ void ALabPlayerController::HandleInteractionTargetChanged(UObject* NewTarget)
             UE_LOG(LogTemp, Warning, TEXT("CurrentInteractTarget Is Null"));
 	    } 
     }
-}
+} 
 
-void ALabPlayerController::HandleDialogueChanged(const FDialogueInfo& Info)
+void ALabPlayerController::HandleDialogueStarted()
 {
+    if (DialogueWidget)
+    {
+        DialogueWidget->SetVisibility(ESlateVisibility::Visible);
+    }
 
-	AActor* Speaker = DialogueManager->GetCurrentSpeaker();
-    if (!Speaker) return;
+    CachedSubsystem->RemoveMappingContext(IMC_Gameplay);
+    CachedSubsystem->AddMappingContext(IMC_Dialogue, 1); 
 
-	SetViewTargetWithBlend(Speaker, 0.5f);
-
-	DialogueWidget->SetVisibility(ESlateVisibility::Visible);
-
-	FInputModeUIOnly InputMode;
-	InputMode.SetWidgetToFocus(DialogueWidget->TakeWidget());
-	SetInputMode(InputMode);
-	bShowMouseCursor = true;
-
-	if (APawn* P = GetPawn())
-	{
-		P->DisableInput(this);
-	}
+    FInputModeGameAndUI Mode;   
+    SetInputMode(Mode);
+    bShowMouseCursor = true;
 }
 
 void ALabPlayerController::HandleDialogueEnded()
 {
-	DialogueWidget->SetVisibility(ESlateVisibility::Hidden);
+    // 종료 시 보이스 정리
+    if (VoiceAudioComp)
+    {
+        VoiceAudioComp->Stop();
+        VoiceAudioComp = nullptr;
+    }
 
-    FInputModeGameOnly InputMode;
-	SetInputMode(InputMode);
-	bShowMouseCursor = false;
+    if (DialogueWidget)
+    {
+        DialogueWidget->HideAll();
+    } 
 
-	if (APawn* P = GetPawn())
-	{
-		P->EnableInput(this);
-	}
+    FInputModeGameOnly Mode;
+    SetInputMode(Mode);
+    bShowMouseCursor = false;
 
-	SetViewTargetWithBlend(CachedPlayerCharacter, 0.3f);
+    CachedSubsystem->RemoveMappingContext(IMC_Dialogue);
+    CachedSubsystem->AddMappingContext(IMC_Gameplay, 0);
+
+    if (APawn* P = GetPawn())
+    {
+        SetViewTargetWithBlend(P, 0.25f);
+    }
 }
+
+void ALabPlayerController::HandleNodeChanged(const FDialogueNode& Node)
+{
+    if (DialogueWidget)
+    {
+        DialogueWidget->ShowNode(Node);
+    }
+}
+
+void ALabPlayerController::HandleActionTriggered(FName ActionID)
+{
+    // 여기서는 직접 처리하지 말고(책임 분리), ShopSubsystem 등이 구독해서 처리하는 걸 추천
+    UE_LOG(LogTemp, Warning, TEXT("Dialogue Action: %s"), *ActionID.ToString());
+}
+
+void ALabPlayerController::HandleLineEventStart(const FDialogueLineEvent& LineEvent, AActor* NPC, AActor* Interactor)
+{
+    // 보이스(Stop 가능하도록 AudioComponent로)
+    if (LineEvent.VoiceSound)
+    {
+        if (VoiceAudioComp)
+        {
+            VoiceAudioComp->Stop();
+            VoiceAudioComp = nullptr;
+        }
+
+        VoiceAudioComp = UGameplayStatics::SpawnSound2D(this, LineEvent.VoiceSound);
+    }
+
+    // 짧은 SFX는 그냥 2D로
+    if (LineEvent.SFX)
+    {
+        UGameplayStatics::PlaySound2D(this, LineEvent.SFX);
+    }
+}
+void ALabPlayerController::HandleLineEventStop(const FDialogueLineEvent& LineEvent, AActor* NPC, AActor* Interactor)
+{
+    // 스킵 시 보이스 중단
+    if (VoiceAudioComp)
+    {
+        VoiceAudioComp->Stop();
+        VoiceAudioComp = nullptr;
+    }
+}
+
+void ALabPlayerController::DialogueSkipOrAdvanceInput()
+{
+    if (DialogueWidget && DialogueManager && DialogueManager->IsRunning())
+    {
+        DialogueWidget->OnSkipOrAdvanceInput();
+    }
+}
+
+void ALabPlayerController::DialogueCancle()
+{
+    if (DialogueWidget && DialogueManager && DialogueManager->IsRunning())
+    {
+        DialogueManager->EndDialogue();
+    }
+}
+
  
 void ALabPlayerController::UpdateInteractionUI()
 {
