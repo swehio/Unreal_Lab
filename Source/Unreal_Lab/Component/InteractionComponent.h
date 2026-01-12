@@ -21,8 +21,7 @@ class UNREAL_LAB_API UInteractionComponent : public UActorComponent
 public:	
 	UInteractionComponent();
 
-	virtual void BeginPlay() override; 
-	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void BeginPlay() override;   
 
 	void TryInteract();
 

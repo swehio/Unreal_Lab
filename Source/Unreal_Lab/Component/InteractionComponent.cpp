@@ -4,7 +4,7 @@
 
 UInteractionComponent::UInteractionComponent()
 { 
-	PrimaryComponentTick.bCanEverTick = true; 
+	PrimaryComponentTick.bCanEverTick = false; 
 }
 
 void UInteractionComponent::BeginPlay()
@@ -13,27 +13,18 @@ void UInteractionComponent::BeginPlay()
 
 	FTimerHandle InteractionTraceTimer;
 
-	//GetWorld()->GetTimerManager().SetTimer(
-	//	InteractionTraceTimer,
-	//	this,
-	//	&UInteractionComponent::UpdateInteractionTarget,
-	//	0.05f,
-	//	true
-	//);
-
-}
-
-void UInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	UpdateInteractionTarget();
-}
- 
+	GetWorld()->GetTimerManager().SetTimer(
+		InteractionTraceTimer,
+		this,
+		&UInteractionComponent::UpdateInteractionTarget,
+		0.05f,
+		true
+	);
+} 
 
 void UInteractionComponent::UpdateInteractionTarget()
 {
-	TRACE_CPUPROFILER_EVENT_SCOPE(UpdateInteractionTarget);
+	TRACE_CPUPROFILER_EVENT_SCOPE(UpdateInteractionTargetRepeat);
 	AActor* Owner = GetOwner();
 	if (!Owner) return;
 
