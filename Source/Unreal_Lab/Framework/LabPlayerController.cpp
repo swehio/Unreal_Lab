@@ -135,6 +135,31 @@ void ALabPlayerController::OnPossess(APawn* InPawn)
 	);
 	 
 }
+ 
+void ALabPlayerController::UpdateInteractionUI()
+{
+    if (!CurrentInteractTarget || !InteractionUI) return;
+
+    FText Text = IInteractable::Execute_GetInteractText(CurrentInteractTarget);
+
+    InteractionUI->SetPromptText(Text);
+}
+
+void ALabPlayerController::DialogueSkipOrAdvanceInput()
+{
+    if (DialogueWidget && DialogueManager && DialogueManager->IsRunning())
+    {
+        DialogueWidget->OnSkipOrAdvanceInput();
+    }
+}
+
+void ALabPlayerController::DialogueCancle()
+{
+    if (DialogueWidget && DialogueManager && DialogueManager->IsRunning())
+    {
+        DialogueManager->EndDialogue();
+    }
+}
 
 void ALabPlayerController::Move(const FInputActionValue& Value)
 {
@@ -319,30 +344,8 @@ void ALabPlayerController::HandleLineEventStop(const FDialogueLineEvent& LineEve
     }
 }
 
-void ALabPlayerController::DialogueSkipOrAdvanceInput()
-{
-    if (DialogueWidget && DialogueManager && DialogueManager->IsRunning())
-    {
-        DialogueWidget->OnSkipOrAdvanceInput();
-    }
-}
 
-void ALabPlayerController::DialogueCancle()
-{
-    if (DialogueWidget && DialogueManager && DialogueManager->IsRunning())
-    {
-        DialogueManager->EndDialogue();
-    }
-}
 
- 
-void ALabPlayerController::UpdateInteractionUI()
-{
-	if (!CurrentInteractTarget || !InteractionUI) return;
 
-	FText Text = IInteractable::Execute_GetInteractText(CurrentInteractTarget); 
-
-    InteractionUI->SetPromptText(Text); 
-}
 
 

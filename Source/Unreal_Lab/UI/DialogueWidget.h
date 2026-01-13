@@ -37,6 +37,7 @@ public:
 	void ShowNode(const FDialogueNode& Node);
 
 	// PlayerController에서 스킵/진행 입력으로 호출
+	UFUNCTION(BlueprintCallable)
 	void OnSkipOrAdvanceInput();
 
 	void HideAll();

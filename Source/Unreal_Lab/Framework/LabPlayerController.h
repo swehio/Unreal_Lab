@@ -41,8 +41,7 @@ private:
 	// 라인 연출(보이스/SFX) 시작/중단
 	void HandleLineEventStart(const struct FDialogueLineEvent& LineEvent, AActor* NPC, AActor* Interactor);
 	void HandleLineEventStop(const struct FDialogueLineEvent& LineEvent, AActor* NPC, AActor* Interactor);
-
-
+	 
 	void Move(const FInputActionValue& Value); 
 	void Look(const FInputActionValue& Value);
 	void StartJump(const FInputActionValue& Value);
