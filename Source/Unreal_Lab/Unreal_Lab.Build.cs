@@ -8,7 +8,16 @@ public class Unreal_Lab : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG" });
+		PublicDependencyModuleNames.AddRange(new string[] { 
+			"Core", 
+			"CoreUObject", 
+			"Engine", 
+			"InputCore", 
+			"EnhancedInput", 
+			"UMG", 
+			"NavigationSystem", 
+			"AIModule"
+		});
 		PublicIncludePaths.AddRange(new string[] { "Unreal_Lab" });
 	}
 

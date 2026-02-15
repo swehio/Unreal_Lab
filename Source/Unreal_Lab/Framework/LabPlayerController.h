@@ -16,15 +16,17 @@ class UNREAL_LAB_API ALabPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 public:
+	ALabPlayerController();
+
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateInteractionUI();
 
-	// 입력에서 호출
-	void DialogueSkipOrAdvanceInput();
-	void DialogueCancle();
+	//// 입력에서 호출
+	//void DialogueSkipOrAdvanceInput();
+	//void DialogueCancle();
 
 protected: 
 	virtual void OnPossess(APawn* InPawn) override; 
@@ -33,14 +35,14 @@ private:
 	UFUNCTION()
 	void HandleInteractionTargetChanged(UObject* NewTarget);
 
-	void HandleDialogueStarted();
-	void HandleDialogueEnded();
-	void HandleNodeChanged(const struct FDialogueNode& Node);
-	void HandleActionTriggered(FName ActionID);
+	//void HandleDialogueStarted();
+	//void HandleDialogueEnded();
+	//void HandleNodeChanged(const struct FDialogueNode& Node);
+	//void HandleActionTriggered(FName ActionID);
 
-	// 라인 연출(보이스/SFX) 시작/중단
-	void HandleLineEventStart(const struct FDialogueLineEvent& LineEvent, AActor* NPC, AActor* Interactor);
-	void HandleLineEventStop(const struct FDialogueLineEvent& LineEvent, AActor* NPC, AActor* Interactor);
+	//// 라인 연출(보이스/SFX) 시작/중단
+	//void HandleLineEventStart(const struct FDialogueLineEvent& LineEvent, AActor* NPC, AActor* Interactor);
+	//void HandleLineEventStop(const struct FDialogueLineEvent& LineEvent, AActor* NPC, AActor* Interactor);
 	 
 	void Move(const FInputActionValue& Value); 
 	void Look(const FInputActionValue& Value);
@@ -52,11 +54,17 @@ private:
 	void StopCrouch(const FInputActionValue& Value);
 	void OnInteractPressed(const FInputActionValue& Value);
 
+
+protected:
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class UDialogueInputComponent> DialogueInputComp;
+
 private:
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<class UInputMappingContext> IMC_Gameplay;
-	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<class UInputMappingContext> IMC_Dialogue;
+
+	//UPROPERTY(EditAnywhere, Category = "Input")
+	//TObjectPtr<class UInputMappingContext> IMC_Dialogue;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> IA_Move; 
@@ -76,11 +84,11 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputAction> IA_Interact;
 
-	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<UInputAction> IA_DialogueAdvance;
+	//UPROPERTY(EditAnywhere, Category = "Input")
+	//TObjectPtr<UInputAction> IA_DialogueAdvance;
 
-	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<UInputAction> IA_DialogueCancle;
+	//UPROPERTY(EditAnywhere, Category = "Input")
+	//TObjectPtr<UInputAction> IA_DialogueCancle;
 
 	UPROPERTY()
 	TObjectPtr<class UEnhancedInputLocalPlayerSubsystem> CachedSubsystem;
@@ -102,16 +110,16 @@ private:
 	UPROPERTY()
 	TObjectPtr<UUserWidget> PlayerHUDWidget;
 
-	UPROPERTY(EditDefaultsOnly, Category = "UI")
-	TSubclassOf<UUserWidget> DialogueWidgetClass;
+	//UPROPERTY(EditDefaultsOnly, Category = "UI")
+	//TSubclassOf<UUserWidget> DialogueWidgetClass;
 
-	UPROPERTY()
-	TObjectPtr<class UDialogueWidget> DialogueWidget;
+	//UPROPERTY()
+	//TObjectPtr<class UDialogueWidget> DialogueWidget;
 
-	UPROPERTY()
-	TObjectPtr<class UDialogueManagerSubsystem> DialogueManager;
+	//UPROPERTY()
+	//TObjectPtr<class UDialogueManagerSubsystem> DialogueManager;
 
 	// 스킵으로 끊기 위한 현재 보이스
-	UPROPERTY()
-	TObjectPtr<UAudioComponent> VoiceAudioComp;
+	//UPROPERTY()
+	//TObjectPtr<UAudioComponent> VoiceAudioComp;
 };

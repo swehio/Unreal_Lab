@@ -30,15 +30,16 @@ protected:
 	TObjectPtr<class USpringArmComponent> SpringArmComp;
 
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class UInteractionComponent> InteractionComp;
+	TObjectPtr<class UInteractionComponent> InteractionComp; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement")
 	float NormalSpeed;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
 	float SprintSpeedMultiplier;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement")
-	float SprintSpeed; 
+	float SprintSpeed;  
 
 public:
-	UInteractionComponent* GetInteractionComp() const { return InteractionComp; }
+	FORCEINLINE UInteractionComponent* GetInteractionComp() const { return InteractionComp; } 
+
 };

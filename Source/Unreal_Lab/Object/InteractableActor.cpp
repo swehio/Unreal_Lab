@@ -28,6 +28,7 @@ AInteractableActor::AInteractableActor()
 void AInteractableActor::BeginPlay()
 {
 	Super::BeginPlay();
+	if (CachedMeshes.IsEmpty()) return;
 	if (CachedMeshes.Num() == 0)
 	{
 		GetComponents<UMeshComponent>(CachedMeshes);

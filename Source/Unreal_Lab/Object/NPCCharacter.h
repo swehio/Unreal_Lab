@@ -9,8 +9,8 @@
 
 #include "NPCCharacter.generated.h"
   
-class UDialogueDataAsset;
-class UDialogueManagerSubsystem;
+//class UDialogueDataAsset;
+//class UDialogueManagerSubsystem;
 
 UCLASS()
 class UNREAL_LAB_API ANPCCharacter : public AInteractableActor
@@ -24,17 +24,21 @@ public:
 	virtual void Interact_Implementation(AActor* Interactor) override;
 
 protected:
-	virtual void BeginPlay() override;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class UDialogueTargetComponent> DialogueTargetComp;
 
-private:
-	void HandleLineEventStart(const struct FDialogueLineEvent& LineEvent, AActor* NPC, AActor* Interactor);
-	void HandleLineEventStop(const struct FDialogueLineEvent& LineEvent, AActor* NPC, AActor* Interactor);
+//protected:
+//	virtual void BeginPlay() override;
 
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dialogue")
-	TObjectPtr<class UDialogueDataAsset> DialogueData;
-private:
-	UPROPERTY()
-	TObjectPtr<UDialogueManagerSubsystem> DialogueManager;
+//private:
+//	void HandleLineEventStart(const struct FDialogueLineEvent& LineEvent, AActor* NPC, AActor* Interactor);
+//	void HandleLineEventStop(const struct FDialogueLineEvent& LineEvent, AActor* NPC, AActor* Interactor);
+//
+//protected:
+//	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Dialogue")
+//	TObjectPtr<class UDialogueDataAsset> DialogueData;
+//private:
+//	UPROPERTY()
+//	TObjectPtr<UDialogueManagerSubsystem> DialogueManager;
 
 };

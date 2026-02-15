@@ -27,15 +27,15 @@ ALabPlayerCharacter::ALabPlayerCharacter()
 	InteractionComp = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComp")); 
 
 	//Speed 설정
-	NormalSpeed = 230.0f;
-	SprintSpeedMultiplier = 2.2f;
+	NormalSpeed = 300.0f;
+	SprintSpeedMultiplier = 2.0f;
 	SprintSpeed = NormalSpeed * SprintSpeedMultiplier;
 
 	GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
-	bUseControllerRotationYaw = false; 
+	bUseControllerRotationYaw = false;  
 }
 
 void ALabPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
